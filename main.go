@@ -89,18 +89,7 @@ func play_game(nums_of_tries int, rand_num int) (string, GameResult) {
 		fmt.Print("Введите загаданное число: ")
 
 		// Выполняем проверку, что введено число
-		if !scanner.Scan() {
-			fmt.Println("Ошибка чтения")
-			continue
-		}
-
-		input := scanner.Text()
-
-		d, err := strconv.Atoi(input)
-		if err != nil {
-			fmt.Println("Ошибка ввода. В консоль можно вводить только числа")
-			continue
-		}
+		d = readInt(scanner)
 
 		list_nums = append(list_nums, d)
 
@@ -164,4 +153,20 @@ func saveResult(result GameResult) {
 	// Перезаписываем файл
 	data, _ := json.MarshalIndent(results, "", "  ")
 	os.WriteFile("result.json", data, 0644)
+}
+
+func readInt(scanner *bufio.Scanner) int {
+	for {
+		scanner.Scan()
+		input := scanner.Text()
+
+		num, err := strconv.Atoi(input)
+		if err != nil {
+			fmt.Println("Ошибка ввода. В консоль можно вводить только числа")
+			fmt.Print("Попробуйте снова: ")
+			continue
+		}
+
+		return num
+	}
 }
