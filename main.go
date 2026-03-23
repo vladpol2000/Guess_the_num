@@ -124,7 +124,7 @@ func tips(rand_num int, d int) string {
 	switch {
 	case absInt(d-rand_num) <= 5:
 		return (" Ты совсем близок 🔥")
-	case absInt(d-rand_num) <= 15 && (d-rand_num) > 5:
+	case absInt(d-rand_num) <= 15 && absInt(d-rand_num) > 5:
 		return (" Уже теплее 🙂")
 	default:
 		return (" Тут очень холодно ❄️")
