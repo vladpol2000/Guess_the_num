@@ -24,31 +24,36 @@ type GameResult struct {
 func main() {
 	var (
 		rand_num    int
-		level       string
+		level       int
 		play_again  bool = true
 		num_of_game int  = 1
 		answer      string
+		max_level   int    = 3
+		tips_text   string = "Введите номер уровня игры. Easy - 1, Medium - 2 или Hard - 3: "
 	)
 
 	// Используем мапу для уровней игры. Значением по ключу является массив с целыми числами: 1-ое число - диапазон, 2 число - кол-во попыток.
-	levels := map[string][]int{
-		"Easy":   {50, 15},
-		"Medium": {100, 10},
-		"Hard":   {200, 5},
+	levels := map[int][]int{
+		1: {50, 15},
+		2: {100, 10},
+		3: {200, 5},
 	}
+
+	scanner := bufio.NewScanner(os.Stdin)
 
 	for play_again {
 		if num_of_game == 1 {
 			fmt.Print("Добро пожаловать в игру " + color.HiGreenString("\"Угадай число\"\n"))
-			fmt.Print("Введите уровень игры - Easy, Medium или Hard: ")
-			fmt.Scan(&level)
+			fmt.Print(tips_text)
+
+			level = validateInput(scanner, max_level, tips_text)
 
 			// Генерация случайного числа от 0 до 100
 			rand_num = rand.Intn(levels[level][0] + 1)
 
 			fmt.Printf("Давайте сыграем в игру. Попробуйте отгадать загаданное число от 1 до %d. У вас будет всего лишь %d попыток. \n", levels[level][0], levels[level][1])
 
-			msg, result := play_game(levels[level][1], rand_num)
+			msg, result := play_game(levels[level][1], rand_num, levels[level][0])
 			fmt.Println(msg)
 			saveResult(result)
 
@@ -56,15 +61,16 @@ func main() {
 		} else {
 			fmt.Print("Хотите сыграть ещё одну игру? Введите Да или Нет: ")
 			if fmt.Scan(&answer); answer == "Да" {
-				fmt.Print("Введите уровень игры - Easy, Medium или Hard: ")
-				fmt.Scan(&level)
+				fmt.Print(tips_text)
+
+				level := validateInput(scanner, max_level, tips_text)
 
 				// Генерация случайного числа от 0 до 100
 				rand_num = rand.Intn(levels[level][0] + 1)
 
 				fmt.Printf("Давайте сыграем в игру. Попробуйте отгадать загаданное число от 1 до %d. У вас будет всего лишь %d попыток. \n", levels[level][0], levels[level][1])
 
-				msg, result := play_game(levels[level][1], rand_num)
+				msg, result := play_game(levels[level][1], rand_num, levels[level][0])
 				fmt.Println(msg)
 				saveResult(result)
 
@@ -78,18 +84,19 @@ func main() {
 	}
 }
 
-func play_game(nums_of_tries int, rand_num int) (string, GameResult) {
+func play_game(nums_of_tries int, rand_num int, max_num int) (string, GameResult) {
 	list_nums := make([]int, 0) // Переменная для введённых игроком чисел
-
-	var i int = 0
 	scanner := bufio.NewScanner(os.Stdin)
+	var i int = 0
+	tips_text := "Введите загаданное число: "
 
 	// Цикл для n попыток сыграть в игру
 	for i < nums_of_tries {
-		fmt.Print("Введите загаданное число: ")
+
+		fmt.Print(tips_text)
 
 		// Выполняем проверку, что введено число
-		d = readInt(scanner)
+		d = validateInput(scanner, max_num, tips_text)
 
 		list_nums = append(list_nums, d)
 
@@ -155,7 +162,7 @@ func saveResult(result GameResult) {
 	os.WriteFile("result.json", data, 0644)
 }
 
-func readInt(scanner *bufio.Scanner) int {
+func validateInput(scanner *bufio.Scanner, max_num int, tips_text string) int {
 	for {
 		scanner.Scan()
 		input := scanner.Text()
@@ -163,7 +170,11 @@ func readInt(scanner *bufio.Scanner) int {
 		num, err := strconv.Atoi(input)
 		if err != nil {
 			fmt.Println("Ошибка ввода. В консоль можно вводить только числа")
-			fmt.Print("Попробуйте снова: ")
+			fmt.Print(tips_text)
+			continue
+		} else if num > max_num {
+			fmt.Println("Ошибка ввода. Введённое число не может превышать максимальное -", max_num)
+			fmt.Print(tips_text)
 			continue
 		}
 
