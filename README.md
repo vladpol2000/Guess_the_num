@@ -7,8 +7,8 @@
 ## Установка и запуск
 
 ```bash
-git clone https://github.com/your-username/guess-the-number.git
-cd guess-the-number
+git clone https://github.com/vladpol2000/Guess_the_num.git
+cd Guess_the_num
 
 go mod tidy
 go run main.go
