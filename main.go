@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -59,8 +60,7 @@ func main() {
 
 			num_of_game++
 		} else {
-			fmt.Print("Хотите сыграть ещё одну игру? Введите Да или Нет: ")
-			if fmt.Scan(&answer); answer == "Да" {
+			if repeatGame(answer) {
 				fmt.Print(tips_text)
 
 				level := validateInput(scanner, max_level, tips_text)
@@ -79,7 +79,6 @@ func main() {
 				fmt.Println("Спасибо за игру!")
 				return
 			}
-
 		}
 	}
 }
@@ -179,5 +178,23 @@ func validateInput(scanner *bufio.Scanner, max_num int, tips_text string) int {
 		}
 
 		return num
+	}
+}
+
+func repeatGame(answer string) bool {
+	for {
+		fmt.Println("Хотите сыграть ещё одну игру? Введите Да или Нет: ")
+		fmt.Scan(&answer)
+
+		answer = strings.ToLower(answer)
+
+		if answer == "да" {
+			return true
+		} else if answer == "нет" {
+			return false
+		} else {
+			fmt.Println("Вы ввели неверное значение. Попробуйте ещё раз")
+			continue
+		}
 	}
 }
