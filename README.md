@@ -7,7 +7,7 @@
 ## Установка и запуск
 
 ```bash
-git clone https://github.com/vladpol2000/Guess_the_num.git
+git clone https://github.com/vladpol2000/Guess_the_num
 cd Guess_the_num
 
 go mod tidy
